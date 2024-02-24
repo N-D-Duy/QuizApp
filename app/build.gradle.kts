@@ -56,6 +56,9 @@ dependencies {
     //!def
     val room_version = "2.6.1"
     val hilt_version = "2.44"
+    val nav_version = "2.5.3"
+
+
 
     //!default
     implementation("androidx.core:core-ktx:1.12.0")
@@ -108,9 +111,11 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
     implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
 
-    //
-
+    //!navigation
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation ("com.github.PratikFagadiya:AnimatedSmoothBottomNavigation-JetpackCompose:1.1.1")
 }
+
 
 ksp {
 

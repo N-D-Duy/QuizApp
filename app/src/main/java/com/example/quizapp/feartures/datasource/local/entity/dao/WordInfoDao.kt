@@ -21,7 +21,7 @@ interface WordInfoDao {
 
     //get word like query, used for search
     @Query("SELECT * FROM `word-table` WHERE word LIKE '%' || :word || '%'")
-    suspend fun getWordInfoLike(word: String): List<WordInfoEntity>
+    fun getWordInfoLike(word: String): List<WordInfoEntity>
 
     @Query("SELECT * FROM `word-table` WHERE isUsed = 0 ORDER BY RANDOM() LIMIT 20")
     suspend fun fetchRandomUnusedWords(): List<WordInfoEntity>
