@@ -11,18 +11,18 @@ data class Page(
 
 val pages = listOf(
     Page(
-        title = "Lorem Ipsum is simply dummy",
-        description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        title = "Welcome to QuizQuest!",
+        description = "Dive into the world of trivia with QuizQuest! Test your knowledge and learn something new.",
         image = R.drawable.onboarding_1
     ),
     Page(
-        title = "Lorem Ipsum is simply dummy",
-        description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        title = "Get Quizzing Anywhere, Anytime!",
+        description = "Take your love for quizzes offline with our app! No internet? No problem!",
         image = R.drawable.onboading_2
     ),
     Page(
-        title = "Lorem Ipsum is simply dummy",
-        description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        title = "Start Your Offline Quiz Adventure!",
+        description = "Get started with QuizQuest and start your offline quiz adventure today!",
         image = R.drawable.onboarding_3
     )
 )

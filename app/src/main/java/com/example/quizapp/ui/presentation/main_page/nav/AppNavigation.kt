@@ -1,4 +1,4 @@
-package com.example.quizapp.ui.presentation.nav
+package com.example.quizapp.ui.presentation.main_page.nav
 
 import android.util.Log
 import androidx.compose.foundation.layout.padding

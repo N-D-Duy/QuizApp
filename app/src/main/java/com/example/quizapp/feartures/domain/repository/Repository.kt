@@ -1,6 +1,6 @@
 package com.example.quizapp.feartures.domain.repository
 
-import com.example.quizapp.feartures.datasource.local.entity.WordInfoEntity
+import com.example.quizapp.feartures.datasource.local.room.entity.WordInfoEntity
 import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.dictionaryapp.core_utils.Resource
 import com.example.quizapp.core_utils.enums.DismissDuration

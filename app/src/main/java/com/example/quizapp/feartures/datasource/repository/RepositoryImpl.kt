@@ -1,10 +1,10 @@
 package com.example.quizapp.feartures.datasource.repository
 
-import com.example.quizapp.feartures.datasource.local.entity.WordInfoEntity
+import com.example.quizapp.feartures.datasource.local.room.entity.WordInfoEntity
 import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.dictionaryapp.core_utils.Resource
 import com.example.quizapp.core_utils.enums.DismissDuration
-import com.example.quizapp.feartures.datasource.local.WordInfoDatabase
+import com.example.quizapp.feartures.datasource.local.room.WordInfoDatabase
 import com.example.quizapp.feartures.datasource.remote.DictionaryApi
 import com.example.quizapp.feartures.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow

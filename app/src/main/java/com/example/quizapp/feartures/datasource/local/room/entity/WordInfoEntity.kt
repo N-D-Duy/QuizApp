@@ -1,4 +1,4 @@
-package com.example.quizapp.feartures.datasource.local.entity
+package com.example.quizapp.feartures.datasource.local.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

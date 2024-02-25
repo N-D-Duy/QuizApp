@@ -1,4 +1,4 @@
-package com.example.quizapp.feartures.datasource.local
+package com.example.quizapp.feartures.datasource.local.room
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter

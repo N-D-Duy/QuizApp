@@ -1,13 +1,11 @@
-package com.example.quizapp.feartures.datasource.local.entity.dao
+package com.example.quizapp.feartures.datasource.local.room.entity.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import com.example.quizapp.feartures.datasource.local.entity.WordInfoEntity
+import com.example.quizapp.feartures.datasource.local.room.entity.WordInfoEntity
 import com.example.quizapp.core_utils.enums.DismissDuration
-import com.example.quizapp.feartures.domain.model.WordInfo
 
 @Dao
 interface WordInfoDao {
@@ -28,19 +26,19 @@ interface WordInfoDao {
 
     //update isUsed
     @Query("Update `word-table` Set isUsed= :isUsed Where word = :word")
-    suspend fun updateIsUsed(isUsed: Boolean, word: String)
+    suspend fun updateIsUsed(isUsed: Boolean, word: String): Int
     //update isSkipped
     @Query("Update `word-table` Set isSkipped= :isSkipped Where word = :word")
-    suspend fun updateSkip(isSkipped: Boolean, word: String)
+    suspend fun updateSkip(isSkipped: Boolean, word: String): Int
 
     //update dismissDuration
     @Query("Update `word-table` Set dismissDuration= :dismissDuration Where word = :word")
-    suspend fun updateDismissDuration(dismissDuration: DismissDuration, word: String)
+    suspend fun updateDismissDuration(dismissDuration: DismissDuration, word: String): Int
     @Query("Update `word-table` Set expiredTime= :expiredTime Where word = :word")
-    suspend fun updateExpiredTime(expiredTime: Long, word: String)
+    suspend fun updateExpiredTime(expiredTime: Long, word: String): Int
 
     @Query("Update `word-table` Set isFavorite= :isFavorite Where word = :word")
-    suspend fun updateFavorite(isFavorite: Boolean, word: String)
+    suspend fun updateFavorite(isFavorite: Boolean, word: String): Int
     
 
 

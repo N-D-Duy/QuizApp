@@ -33,7 +33,8 @@ fun OnBoardingScreen(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Box (
-            modifier = Modifier.fillMaxWidth().padding(16.dp).align(Alignment.End),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            contentAlignment = Alignment.CenterEnd
             ){
             OnBoardingSkipButton {
                 onEvent(OnBoardingEvent.SaveAppEntry)

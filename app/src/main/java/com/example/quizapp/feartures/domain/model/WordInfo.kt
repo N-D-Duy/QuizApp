@@ -1,6 +1,6 @@
 package com.example.quizapp.feartures.domain.model
 
-import com.example.quizapp.feartures.datasource.local.entity.WordInfoEntity
+import com.example.quizapp.feartures.datasource.local.room.entity.WordInfoEntity
 import com.example.quizapp.core_utils.enums.DismissDuration
 import java.io.Serializable
 
