@@ -1,37 +1,30 @@
 package com.example.quizapp.feartures.domain.use_case.cases
 
-import com.example.quizapp.feartures.domain.repository.Repository
 import com.example.dictionaryapp.core_utils.Resource
+import com.example.quizapp.core_utils.enums.UpdateWordField
+import com.example.quizapp.feartures.domain.repository.Repository
 import kotlinx.coroutines.flow.Flow
 
 class UpdateWord(
-) {
-     companion object{
-         private lateinit var repository: Repository
-         suspend fun updateSkip(isSkipped: Boolean, word: String): Flow<Resource<String>> {
-             if(word.isBlank()) {
-                 throw Exception("Word is blank")
-             } else {
-                 return repository.updateSkip(isSkipped, word)
-             }
-         }
-
-         suspend fun updateFavorite(isFavorite: Boolean, word: String): Flow<Resource<String>> {
-             if(word.isBlank()) {
-                 throw Exception("Word is blank")
-             } else {
-                 return repository.updateFavorite(isFavorite, word)
-             }
-         }
-
-         suspend fun updateIsUsed(isUsed: Boolean, word: String): Flow<Resource<String>> {
-             if(word.isBlank()) {
-                 throw Exception("Word is blank")
-             } else {
-                 return repository.updateIsUsed(isUsed, word)
-             }
-         }
-
-
-     }
+    private val repository: Repository
+){
+    suspend operator fun invoke(word: String, data: Boolean, type: UpdateWordField): Flow<Resource<String>> {
+        if(word.isEmpty() || word.isBlank()){
+            throw IllegalArgumentException("Word cannot be empty")
+        }
+        when(type){
+            UpdateWordField.USED -> {
+                // update used
+                return repository.updateSkip(data, word)
+            }
+            UpdateWordField.SKIP -> {
+                // update skip
+                 return repository.updateSkip(data, word)
+            }
+            UpdateWordField.FAVOURITE -> {
+                // update favourite
+                return repository.updateFavorite(data, word)
+            }
+        }
+    }
 }

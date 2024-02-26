@@ -222,5 +222,24 @@ class RepositoryImpl(
         }
     }
 
+    override suspend fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>> {
+        return flow {
+            try {
+                //fetch favorite words from word table
+                val wordInfoList = db.wordDao.fetchFavoriteWords().map { it.toWordInfo() }
+                emit(Resource.Success(wordInfoList))
+            } catch (e: HttpException) {
+                emit(
+                    Resource.Error(
+                        e.localizedMessage
+                            ?: "Couldn't reach server. Check your internet connection"
+                    )
+                )
+            } catch (e: IOException) {
+                emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
+            }
+        }
+    }
+
 
 }

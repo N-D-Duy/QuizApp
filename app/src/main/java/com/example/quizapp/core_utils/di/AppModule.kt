@@ -3,19 +3,19 @@ package com.example.quizapp.core_utils.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.example.dictionaryapp.core_utils.parse.GsonParser
 import com.example.quizapp.feartures.datasource.local.room.Converters
 import com.example.quizapp.feartures.datasource.local.room.WordInfoDatabase
+import com.example.quizapp.feartures.datasource.local.shared_preference.MySharedPreferences
+import com.example.quizapp.feartures.datasource.local.shared_preference.SharedPreferencesHelper
 import com.example.quizapp.feartures.datasource.remote.DictionaryApi
 import com.example.quizapp.feartures.datasource.repository.RepositoryImpl
 import com.example.quizapp.feartures.domain.repository.Repository
 import com.example.quizapp.feartures.domain.use_case.WordUseCases
+import com.example.quizapp.feartures.domain.use_case.cases.GetFavoriteWords
 import com.example.quizapp.feartures.domain.use_case.cases.GetRandomUnusedWordsFromWordTable
 import com.example.quizapp.feartures.domain.use_case.cases.GetWordsLikeFromWordTable
-import com.example.quizapp.feartures.domain.use_case.cases.SearchSingleWord
 import com.example.quizapp.feartures.domain.use_case.cases.UpdateWord
-import com.example.dictionaryapp.core_utils.parse.GsonParser
-import com.example.quizapp.feartures.datasource.local.shared_preference.MySharedPreferences
-import com.example.quizapp.feartures.datasource.local.shared_preference.SharedPreferencesHelper
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -66,9 +66,9 @@ object WordInfoModule {
     fun provideWordUseCase(repository: Repository): WordUseCases {
         return WordUseCases(
             getWordInfoLikeFromWordTable = GetWordsLikeFromWordTable(repository),
-            getSingleWordInfoFromWordTable = SearchSingleWord(repository),
             fetchRandomUnusedWordsFromWordTable = GetRandomUnusedWordsFromWordTable(repository),
-            updateWord = UpdateWord()
+            getFavoriteWords = GetFavoriteWords(repository),
+            updateWord = UpdateWord(repository)
         )
     }
 
@@ -77,7 +77,4 @@ object WordInfoModule {
     fun provideSharedPreferences(@ApplicationContext context: Context): MySharedPreferences {
         return SharedPreferencesHelper(context)
     }
-
-
-
 }

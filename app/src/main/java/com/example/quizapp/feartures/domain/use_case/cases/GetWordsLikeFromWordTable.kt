@@ -5,8 +5,9 @@ import com.example.quizapp.feartures.domain.repository.Repository
 import com.example.dictionaryapp.core_utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class GetWordsLikeFromWordTable(
+class GetWordsLikeFromWordTable (
     private val repository: Repository
 ) {
     suspend operator fun invoke(query: String): Flow<Resource<List<WordInfo>>> {

@@ -23,6 +23,9 @@ interface WordInfoDao {
 
     @Query("SELECT * FROM `word-table` WHERE isUsed = 0 ORDER BY RANDOM() LIMIT 20")
     suspend fun fetchRandomUnusedWords(): List<WordInfoEntity>
+    
+    @Query("SELECT * FROM `word-table` WHERE isFavorite = 1")
+    suspend fun fetchFavoriteWords(): List<WordInfoEntity>
 
     //update isUsed
     @Query("Update `word-table` Set isUsed= :isUsed Where word = :word")

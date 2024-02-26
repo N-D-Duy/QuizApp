@@ -1,3 +1,4 @@
+/*
 package com.example.quizapp.core_utils.trie
 
 import com.example.quizapp.feartures.domain.model.WordInfo
@@ -7,11 +8,13 @@ class Trie<Key> {
     // root of a Trie always has the `key` and `parent` as null.
     private val root = TrieNode<Key>(null, null)
 
-    /**
+    */
+/**
      * inserts the list into the Trie
      * @param: list - generic list contain items to be added
      * @param: wordModel - the wordModel which holds the info about the word passed as a list.
-     */
+     *//*
+
     fun insert(list: List<Key>, wordInfo: WordInfo) {
         var current = root
         list.forEach { element ->
@@ -25,11 +28,13 @@ class Trie<Key> {
         current.wordInfo = wordInfo
     }
 
-    /**
+    */
+/**
      * checks if list is contained the Trie
      * @param: list - generic list containing the items to be checked
      * @return: WordState - `true` if the list is contained in the Trie else `false`
-     */
+     *//*
+
     fun contains(list: List<Key>): WordState {
         var current = root
         list.forEach { element ->
@@ -40,11 +45,13 @@ class Trie<Key> {
         return WordState.SingleWordState(current.wordInfo, isContained = current.isValidWord)
     }
 
-    /**
+    */
+/**
      * searches for other words that match the given prefix.
      * @param: prefix - list contain the prefix word.
      * @return list containing another list matching the required prefix.
-     */
+     *//*
+
     fun prefixMatch(prefix: List<Key>): List<List<Key>> {
         var current = root
 
@@ -56,12 +63,14 @@ class Trie<Key> {
         return collections(prefix, current)
     }
 
-    /**
+    */
+/**
      * helper function to `prefixMatch` which does the prefix matching
      * @param: prefix
      * @param: node
      * @return: List<List<Key>>
-     */
+     *//*
+
     private fun collections(prefix: List<Key>, node: TrieNode<Key>?): List<List<Key>> {
         val results = mutableListOf<List<Key>>()
         if (node?.isValidWord == true) {
@@ -74,4 +83,4 @@ class Trie<Key> {
 
         return results
     }
-}
+}*/

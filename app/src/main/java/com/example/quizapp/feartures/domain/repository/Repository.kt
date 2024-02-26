@@ -26,5 +26,6 @@ interface Repository {
     suspend fun searchWordInfoFromApi(query: String): Flow<Resource<WordInfo>>
     suspend fun updateExpiredTime(expiredTime: Long, word: String): Flow<Resource<String>>
     suspend fun updateFavorite(isFavorite: Boolean, word: String): Flow<Resource<String>>
+    suspend fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>>
 
 }
