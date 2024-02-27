@@ -16,14 +16,20 @@ class SearchViewModel @Inject constructor(
 ): ViewModel(){
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
+    private val _query = MutableStateFlow("")
+    val query: MutableStateFlow<String> = _query
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching: MutableStateFlow<Boolean> = _isSearching
+
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Loading)
     val searchState: MutableStateFlow<SearchState> = _searchState
 
-    fun searchWord(word: String){
+    fun onSearchWordsChange(){
         _searchState.value = SearchState.Loading
         scope.launch {
             try{
-                val result = useCases.getWordInfoLikeFromWordTable.invoke(word)
+                val result = useCases.searchWord(query.value)
                 result.collectLatest {
                     when(it){
                         is Resource.Loading -> {

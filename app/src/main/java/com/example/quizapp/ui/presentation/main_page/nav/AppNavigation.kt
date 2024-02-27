@@ -31,7 +31,6 @@ import com.example.quizapp.ui.theme.GreyTint
 import com.example.quizapp.ui.theme.Orange
 
 
-@Preview
 @Composable
 fun AppNavigation() {
     val bottomNavigationItems = listOf(

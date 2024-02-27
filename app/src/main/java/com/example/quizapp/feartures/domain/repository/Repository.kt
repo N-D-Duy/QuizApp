@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     //for search
-    fun getWordInfoLikeFromWordTable(query: String): Flow<Resource<List<WordInfo>>>
+    fun searchWordInfo(query: String): Flow<Resource<List<WordInfo>>>
 
     suspend fun insertWordToWordTable(word: WordInfoEntity): Flow<Resource<String>>
 
@@ -23,7 +23,7 @@ interface Repository {
     ): Flow<Resource<String>>
 
     suspend fun downloadWordInfoFromApiAndInsertToWordTable(words: List<String>): Flow<Resource<List<WordInfo>>>
-    suspend fun searchWordInfoFromApi(query: String): Flow<Resource<WordInfo>>
+
     suspend fun updateExpiredTime(expiredTime: Long, word: String): Flow<Resource<String>>
     suspend fun updateFavorite(isFavorite: Boolean, word: String): Flow<Resource<String>>
     suspend fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>>

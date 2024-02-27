@@ -1,8 +1,11 @@
 package com.example.quizapp.ui.presentation.home_page
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.example.dictionaryapp.core_utils.Resource
 import com.example.quizapp.core_utils.enums.UpdateWordField
+import com.example.quizapp.core_utils.functions.ReadWordsFromAsset
+import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.quizapp.feartures.domain.use_case.WordUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +20,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val useCases: WordUseCases
 ) : ViewModel() {
+
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _dataState = MutableStateFlow<HomeState>(HomeState.Loading)
@@ -46,7 +50,49 @@ class HomeViewModel @Inject constructor(
         fetchRandomWord()
     }
 
-    private fun fetchRandomWord() {
+    private val _downloadWordsState = MutableStateFlow<DownloadWords>(
+        DownloadWords.Loading
+    )
+    val downloadWordsState: MutableStateFlow<DownloadWords> = _downloadWordsState
+
+
+    fun downloadWords(context: Context) {
+        _downloadWordsState.value = DownloadWords.Loading
+        scope.launch {
+            try {
+                val stringWords = ReadWordsFromAsset.readWordsFromAsset(context)
+                val result = useCases.downloadWordsFromApi.invoke(stringWords)
+
+                result.collectLatest {
+                    when (it) {
+                        is Resource.Loading -> {
+                            _downloadWordsState.value = DownloadWords.Loading
+                        }
+
+                        is Resource.Success -> {
+                            _downloadWordsState.value =
+                                DownloadWords.DownloadWordsSuccess(
+                                    it.data ?: emptyList()
+                                )
+                        }
+
+                        is Resource.Error -> {
+                            _downloadWordsState.value =
+                                DownloadWords.DownloadWordsError(
+                                    it.message ?: "An unexpected error occurred"
+                                )
+                        }
+                    }
+                }
+
+            } catch (e: Exception) {
+                _downloadWordsState.value =
+                    DownloadWords.DownloadWordsError(e.message ?: "An unexpected error occurred")
+            }
+        }
+    }
+
+    fun fetchRandomWord() {
         _dataState.value = HomeState.Loading
         scope.launch {
             try {
@@ -56,11 +102,14 @@ class HomeViewModel @Inject constructor(
                         is Resource.Loading -> {
                             _dataState.value = HomeState.Loading
                         }
+
                         is Resource.Success -> {
                             _dataState.value = HomeState.Success(it.data ?: emptyList())
                         }
+
                         is Resource.Error -> {
-                            _dataState.value = HomeState.Error(it.message ?: "An unexpected error occurred")
+                            _dataState.value =
+                                HomeState.Error(it.message ?: "An unexpected error occurred")
                         }
                     }
                 }
@@ -117,9 +166,16 @@ class HomeViewModel @Inject constructor(
             _isDescriptionShowing.value = HomeWidgetState.IsDescriptionHiding
         }
     }
+
+    sealed class DownloadWords {
+        data object Loading : DownloadWords()
+        data class DownloadWordsSuccess(val words: List<WordInfo>) : DownloadWords()
+        data class DownloadWordsError(val message: String) : DownloadWords()
+    }
 }
 
 sealed class HomeWidgetState {
+
     data object IsShowingOptionBar : HomeWidgetState()
     data object IsHidingOptionBar : HomeWidgetState()
 

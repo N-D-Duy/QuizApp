@@ -12,9 +12,10 @@ import com.example.quizapp.feartures.datasource.remote.DictionaryApi
 import com.example.quizapp.feartures.datasource.repository.RepositoryImpl
 import com.example.quizapp.feartures.domain.repository.Repository
 import com.example.quizapp.feartures.domain.use_case.WordUseCases
+import com.example.quizapp.feartures.domain.use_case.cases.DownloadWordsFromApi
 import com.example.quizapp.feartures.domain.use_case.cases.GetFavoriteWords
 import com.example.quizapp.feartures.domain.use_case.cases.GetRandomUnusedWordsFromWordTable
-import com.example.quizapp.feartures.domain.use_case.cases.GetWordsLikeFromWordTable
+import com.example.quizapp.feartures.domain.use_case.cases.SearchWord
 import com.example.quizapp.feartures.domain.use_case.cases.UpdateWord
 import com.google.gson.Gson
 import dagger.Module
@@ -65,10 +66,11 @@ object WordInfoModule {
     @Singleton
     fun provideWordUseCase(repository: Repository): WordUseCases {
         return WordUseCases(
-            getWordInfoLikeFromWordTable = GetWordsLikeFromWordTable(repository),
+            searchWord = SearchWord(repository),
             fetchRandomUnusedWordsFromWordTable = GetRandomUnusedWordsFromWordTable(repository),
             getFavoriteWords = GetFavoriteWords(repository),
-            updateWord = UpdateWord(repository)
+            updateWord = UpdateWord(repository),
+            downloadWordsFromApi = DownloadWordsFromApi(repository)
         )
     }
 

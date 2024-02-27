@@ -5,7 +5,6 @@ import javax.inject.Inject
 
 class ReadWordsFromAsset {
     companion object {
-
         fun readWordsFromAsset(context: Context): List<String> {
             val words = mutableListOf<String>()
             try {
@@ -13,7 +12,7 @@ class ReadWordsFromAsset {
                 val assetManager = context.assets
 
                 // Mở tệp tin từ thư mục assets
-                val inputStream = assetManager.open("words.txt")
+                val inputStream = assetManager.open("word.txt")
 
                 // Đọc nội dung từ InputStream
                 val reader = inputStream.bufferedReader()
@@ -25,8 +24,7 @@ class ReadWordsFromAsset {
             } catch (e: Exception) {
                 throw Exception("Error reading words from assets: ${e.message}")
             }
-            return words
-
+            return words.shuffled().subList(0, 20)
         }
     }
 }

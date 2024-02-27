@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MyApp() {
         var showOnboarding by remember { mutableStateOf(!mainViewModel.isOnBoardingEntry()) }
-
         when {
             showOnboarding -> {
                 OnBoardingScreen(onEvent = {

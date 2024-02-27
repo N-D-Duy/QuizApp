@@ -1,5 +1,6 @@
 package com.example.quizapp.feartures.datasource.repository
 
+import android.util.Log
 import com.example.quizapp.feartures.datasource.local.room.entity.WordInfoEntity
 import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.dictionaryapp.core_utils.Resource
@@ -16,12 +17,25 @@ class RepositoryImpl(
     private val api: DictionaryApi,
     private val db: WordInfoDatabase
 ) : Repository {
-    override fun getWordInfoLikeFromWordTable(query: String): Flow<Resource<List<WordInfo>>> {
+    override fun searchWordInfo(query: String): Flow<Resource<List<WordInfo>>> {
         return flow {
             try {
-                //get word like query, used for search
-                val wordInfoList = db.wordDao.getWordInfoLike(query).map { it.toWordInfo() }
-                emit(Resource.Success(wordInfoList))
+                val result: ArrayList<WordInfo> = arrayListOf()
+
+                //first, check all words that contain the query from the local database
+                val localWords = db.wordDao.getWordInfoLike(query)
+                if(localWords.isEmpty()){
+                    //if no words found, fetch from the api, and insert to the local database
+                    val response = api.getWordInfo(query)
+                    if(response.isNotEmpty()){
+                        val wordEntity = response.first().toWordInfoEntity()
+                        db.wordDao.insertWord(wordEntity)
+                        result.add(wordEntity.toWordInfo())
+                    }
+                } else {
+                    result.addAll(localWords.map { it.toWordInfo() })
+                }
+                emit(Resource.Success(result))
             } catch (e: HttpException) {
                 emit(
                     Resource.Error(
@@ -141,33 +155,22 @@ class RepositoryImpl(
     override suspend fun downloadWordInfoFromApiAndInsertToWordTable(words: List<String>): Flow<Resource<List<WordInfo>>> {
         return flow {
             try {
-                var result: ArrayList<WordInfoEntity> = arrayListOf()
+                Log.e("RepositoryImpl", "Start download: $words")
+                val result: ArrayList<WordInfoEntity> = arrayListOf()
                 //download word info from api and insert to word table
                 for (word in words) {
                     val wordInfo = api.getWordInfo(word).map { it.toWordInfoEntity() }
-                    result.add(wordInfo[0])
+                    //check if word is already in the table
+                    val isWordExist = db.wordDao.getWordInfo(word)
+                    if (isWordExist == null) {
+                        result.add(wordInfo.first())
+                    }
                 }
                 db.wordDao.insertWords(result.toList())
+                for(i: Int in 0 until result.size) {
+                    Log.e("RepositoryImpl", "Inserted: ${result[i].word}")
+                }
                 emit(Resource.Success(result.map { it.toWordInfo() }))
-            } catch (e: HttpException) {
-                emit(
-                    Resource.Error(
-                        e.localizedMessage
-                            ?: "Couldn't reach server. Check your internet connection"
-                    )
-                )
-            } catch (e: IOException) {
-                emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
-            }
-        }
-    }
-
-    override suspend fun searchWordInfoFromApi(query: String): Flow<Resource<WordInfo>> {
-        return flow {
-            try {
-                //search word info from api
-                val wordInfoList = api.getWordInfo(query).map { it.toWordInfoEntity() }
-                emit(Resource.Success(wordInfoList.first().toWordInfo()))
             } catch (e: HttpException) {
                 emit(
                     Resource.Error(
