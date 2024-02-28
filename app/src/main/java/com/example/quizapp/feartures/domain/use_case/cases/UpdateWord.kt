@@ -12,18 +12,20 @@ class UpdateWord(
         if(word.isEmpty() || word.isBlank()){
             throw IllegalArgumentException("Word cannot be empty")
         }
-        when(type){
+        return when(type){
             UpdateWordField.USED -> {
                 // update used
-                return repository.updateSkip(data, word)
+                repository.updateSkip(data, word)
             }
+
             UpdateWordField.SKIP -> {
                 // update skip
-                 return repository.updateSkip(data, word)
+                repository.updateSkip(data, word)
             }
+
             UpdateWordField.FAVOURITE -> {
                 // update favourite
-                return repository.updateFavorite(data, word)
+                repository.updateFavorite(data, word)
             }
         }
     }

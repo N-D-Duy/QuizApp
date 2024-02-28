@@ -244,5 +244,24 @@ class RepositoryImpl(
         }
     }
 
+    override suspend fun isFavorite(word: String): Flow<Resource<Boolean>> {
+        return flow {
+            try {
+                //check if word is favorite
+                val isFavorite = db.wordDao.isFavorite(word)
+                emit(Resource.Success(isFavorite))
+            } catch (e: HttpException) {
+                emit(
+                    Resource.Error(
+                        e.localizedMessage
+                            ?: "Couldn't reach server. Check your internet connection"
+                    )
+                )
+            } catch (e: IOException) {
+                emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
+            }
+        }
+    }
+
 
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,8 +23,11 @@ import com.PratikFagadiya.smoothanimationbottombar.ui.SmoothAnimationBottomBar
 import com.example.quizapp.R
 import com.example.quizapp.core_utils.routes.AppRoutes
 import com.example.quizapp.ui.presentation.favorite_page.FavoritePage
+import com.example.quizapp.ui.presentation.favorite_page.FavoriteViewModel
 import com.example.quizapp.ui.presentation.home_page.HomePage
+import com.example.quizapp.ui.presentation.home_page.HomeViewModel
 import com.example.quizapp.ui.presentation.search_page.SearchPage
+import com.example.quizapp.ui.presentation.search_page.SearchViewModel
 import com.example.quizapp.ui.theme.Blue
 import com.example.quizapp.ui.theme.BlueTint
 import com.example.quizapp.ui.theme.Grey
@@ -77,15 +81,24 @@ fun AppNavigation() {
         Modifier.padding(innerPadding)
         NavHost(navController, startDestination = AppRoutes.HomePage.route) {
             composable(AppRoutes.HomePage.route) {
-                HomePage()
+                val homeViewModel = hiltViewModel<HomeViewModel>()
+                HomePage(
+                    viewModel = homeViewModel
+                )
             }
 
             composable(AppRoutes.SearchPage.route) {
-                SearchPage()
+                val searchViewModel = hiltViewModel<SearchViewModel>()
+                SearchPage(
+                    viewModel = searchViewModel
+                )
             }
 
             composable(AppRoutes.FavoritePage.route) {
-                FavoritePage()
+                val favoriteViewModel = hiltViewModel<FavoriteViewModel>()
+                FavoritePage(
+                    viewModel = favoriteViewModel
+                )
             }
         }
     }

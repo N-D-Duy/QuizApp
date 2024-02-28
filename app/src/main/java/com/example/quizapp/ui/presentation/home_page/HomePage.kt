@@ -16,18 +16,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.quizapp.ui.components.CustomLoading
 import com.example.quizapp.ui.components.CustomSnackBar
+import com.example.quizapp.ui.presentation.home_page.components.HomeComponents
+import com.example.quizapp.ui.presentation.home_page.components.HomePager
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomePage(
+    viewModel: HomeViewModel,
 ) {
     val context = LocalContext.current
-    val viewModel: HomeViewModel = hiltViewModel()
-
     val mainState = viewModel.dataState.collectAsState()
     val downloadWordsState = viewModel.downloadWordsState.collectAsState()
 
@@ -36,6 +36,7 @@ fun HomePage(
             // Show loading
             CustomLoading()
         }
+
         is HomeState.Success -> {
             // Show success
             Box(
@@ -44,11 +45,12 @@ fun HomePage(
                 val data = (mainState.value as HomeState.Success).data
                 if (data.isEmpty()
                     && downloadWordsState.value !is HomeViewModel.DownloadWords.Loading
-                    && downloadWordsState.value !is HomeViewModel.DownloadWords.DownloadWordsError) {
+                    && downloadWordsState.value !is HomeViewModel.DownloadWords.DownloadWordsError
+                ) {
                     DownloadWords(context, viewModel, downloadWordsState.value)
                     viewModel.fetchRandomWord()
                 } else {
-                    HomeScreen(data = data)
+                    HomeScreen(data = data, viewModel)
                 }
             }
         }
@@ -92,7 +94,7 @@ fun DownloadWords(
         }
         if (state is HomeViewModel.DownloadWords.DownloadWordsError) {
             CustomSnackBar(
-                message = (state).message,
+                message = state.message,
                 actionLabel = "Retry",
                 modifier = Modifier.weight(1f)
             ) {
@@ -111,14 +113,12 @@ fun DownloadWords(
 
 @Composable
 fun HomeScreen(
-    data: List<WordInfo>
+    data: List<WordInfo>,
+    viewModel: HomeViewModel
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = data.size.toString())
-    }
+    HomePager(words = data, viewModel = viewModel)
 }
+
+
+
 

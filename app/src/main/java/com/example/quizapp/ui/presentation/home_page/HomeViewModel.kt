@@ -26,28 +26,29 @@ class HomeViewModel @Inject constructor(
     private val _dataState = MutableStateFlow<HomeState>(HomeState.Loading)
     val dataState: StateFlow<HomeState> = _dataState
 
-    private val _isWordHidden =
-        MutableStateFlow<HomeWidgetState>(HomeWidgetState.IsWordHidden) //word was hidden (false)
-    val isWordHidden: StateFlow<HomeWidgetState> = _isWordHidden
-
-    private val _isPlayingAudio =
-        MutableStateFlow<HomeWidgetState>(HomeWidgetState.IsPausedAudio) //audio is paused (false)
-    val isPlayingAudio: StateFlow<HomeWidgetState> = _isPlayingAudio
-
-    private val _isShowingOptionBar =
-        MutableStateFlow<HomeWidgetState>(HomeWidgetState.IsHidingOptionBar) //option bar is hidden (false)
-    val isShowingOptionBar: StateFlow<HomeWidgetState> = _isShowingOptionBar
-
-    private val _isFavoritePressed =
-        MutableStateFlow<HomeWidgetState>(HomeWidgetState.IsFavoriteUnPressed) //favorite is not pressed (false)
-    val isFavoritePressed: StateFlow<HomeWidgetState> = _isFavoritePressed
-
-    private val _isDescriptionShowing =
-        MutableStateFlow<HomeWidgetState>(HomeWidgetState.IsDescriptionHiding) //description is hidden (false)
-    val isDescriptionShowing: StateFlow<HomeWidgetState> = _isDescriptionShowing
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite = _isFavorite
 
     init {
         fetchRandomWord()
+    }
+    fun isFavoriteWord(word: String){
+        scope.launch {
+            val result = useCases.isFavorite.invoke(word)
+            result.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+                        _isFavorite.value = false
+                    }
+                    is Resource.Success -> {
+                        _isFavorite.value = it.data ?: false
+                    }
+                    is Resource.Error -> {
+                        _isFavorite.value = false
+                    }
+                }
+            }
+        }
     }
 
     private val _downloadWordsState = MutableStateFlow<DownloadWords>(
@@ -125,69 +126,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateWordState(isHidden: Boolean) {
-        if (isHidden) {
-            _isWordHidden.value = HomeWidgetState.IsWordHidden
-        } else {
-            _isWordHidden.value = HomeWidgetState.IsWordShowing
-        }
-    }
-
-    fun updateAudioState(isPlaying: Boolean) {
-        if (isPlaying) {
-            _isPlayingAudio.value = HomeWidgetState.IsPlayingAudio
-        } else {
-            _isPlayingAudio.value = HomeWidgetState.IsPausedAudio
-        }
-    }
-
-    fun updateOptionBarState(isShowing: Boolean) {
-        if (isShowing) {
-            _isShowingOptionBar.value = HomeWidgetState.IsShowingOptionBar
-        } else {
-            _isShowingOptionBar.value = HomeWidgetState.IsHidingOptionBar
-        }
-    }
-
-    fun updateFavoritePressedState(onPress: () -> Unit) {
-        if (_isFavoritePressed.value is HomeWidgetState.IsFavoritePressed) {
-            onPress() //update database
-            _isFavoritePressed.value = HomeWidgetState.IsFavoriteUnPressed
-        } else {
-            onPress() //update database
-            _isFavoritePressed.value = HomeWidgetState.IsFavoritePressed
-        }
-    }
-
-    fun updateDescriptionState(isShowing: Boolean) {
-        if (isShowing) {
-            _isDescriptionShowing.value = HomeWidgetState.IsDescriptionShowing
-        } else {
-            _isDescriptionShowing.value = HomeWidgetState.IsDescriptionHiding
-        }
-    }
 
     sealed class DownloadWords {
         data object Loading : DownloadWords()
         data class DownloadWordsSuccess(val words: List<WordInfo>) : DownloadWords()
         data class DownloadWordsError(val message: String) : DownloadWords()
     }
-}
-
-sealed class HomeWidgetState {
-
-    data object IsShowingOptionBar : HomeWidgetState()
-    data object IsHidingOptionBar : HomeWidgetState()
-
-    data object IsPlayingAudio : HomeWidgetState()
-    data object IsPausedAudio : HomeWidgetState()
-
-    data object IsWordHidden : HomeWidgetState()
-    data object IsWordShowing : HomeWidgetState()
-
-    data object IsFavoritePressed : HomeWidgetState()
-    data object IsFavoriteUnPressed : HomeWidgetState()
-
-    data object IsDescriptionShowing : HomeWidgetState()
-    data object IsDescriptionHiding : HomeWidgetState()
 }

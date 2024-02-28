@@ -28,4 +28,6 @@ interface Repository {
     suspend fun updateFavorite(isFavorite: Boolean, word: String): Flow<Resource<String>>
     suspend fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>>
 
+    suspend fun isFavorite(word: String): Flow<Resource<Boolean>>
+
 }

@@ -11,9 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.quizapp.ui.components.CustomLoading
 
 @Composable
-fun FavoritePage() {
-    val viewModel: FavoriteViewModel = hiltViewModel()
-
+fun FavoritePage(
+    viewModel: FavoriteViewModel
+) {
     val state = viewModel.favoriteWords.collectAsState()
     Box(modifier = Modifier.fillMaxSize()){
         when(state.value){

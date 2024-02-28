@@ -17,8 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun SearchPage() {
-    val viewModel: SearchViewModel = hiltViewModel()
+fun SearchPage(
+    viewModel: SearchViewModel,
+) {
     val state = viewModel.searchState.collectAsState()
 
     val query = remember {

@@ -15,6 +15,7 @@ import com.example.quizapp.feartures.domain.use_case.WordUseCases
 import com.example.quizapp.feartures.domain.use_case.cases.DownloadWordsFromApi
 import com.example.quizapp.feartures.domain.use_case.cases.GetFavoriteWords
 import com.example.quizapp.feartures.domain.use_case.cases.GetRandomUnusedWordsFromWordTable
+import com.example.quizapp.feartures.domain.use_case.cases.IsFavorite
 import com.example.quizapp.feartures.domain.use_case.cases.SearchWord
 import com.example.quizapp.feartures.domain.use_case.cases.UpdateWord
 import com.google.gson.Gson
@@ -70,7 +71,8 @@ object WordInfoModule {
             fetchRandomUnusedWordsFromWordTable = GetRandomUnusedWordsFromWordTable(repository),
             getFavoriteWords = GetFavoriteWords(repository),
             updateWord = UpdateWord(repository),
-            downloadWordsFromApi = DownloadWordsFromApi(repository)
+            downloadWordsFromApi = DownloadWordsFromApi(repository),
+            isFavorite = IsFavorite(repository)
         )
     }
 
@@ -79,4 +81,5 @@ object WordInfoModule {
     fun provideSharedPreferences(@ApplicationContext context: Context): MySharedPreferences {
         return SharedPreferencesHelper(context)
     }
+
 }
