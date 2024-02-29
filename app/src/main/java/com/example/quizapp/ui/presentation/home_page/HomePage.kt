@@ -2,6 +2,7 @@ package com.example.quizapp.ui.presentation.home_page
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,7 @@ fun HomePage(
     val context = LocalContext.current
     val mainState = viewModel.dataState.collectAsState()
     val downloadWordsState = viewModel.downloadWordsState.collectAsState()
-
+    viewModel.resetDownloadState()
 
     when (mainState.value) {
         is HomeState.Loading -> {
@@ -54,11 +55,10 @@ fun HomePage(
 
         is HomeState.Error -> {
             // Show failed
+            Log.w("HomePage", "home state error")
             CustomSnackBar(message = (mainState.value as HomeState.Error).error)
         }
     }
-
-
 }
 
 @Composable
@@ -85,6 +85,7 @@ fun DownloadWords(
         }
         if (state is HomeViewModel.DownloadWords.DownloadWordsError) {
             CustomSnackBar(message = state.message)
+            Log.w("HomePages", "Error: ${state.message}")
         }
     }
 
