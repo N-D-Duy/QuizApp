@@ -26,10 +26,10 @@ interface WordInfoDao {
     suspend fun getWordInfo(word: String): WordInfoEntity?
 
     @Query("SELECT * FROM `word-table` WHERE isUsed = 0 ORDER BY RANDOM() LIMIT 20")
-    suspend fun fetchRandomUnusedWords(): List<WordInfoEntity>
+    fun fetchRandomUnusedWords(): List<WordInfoEntity>
     
     @Query("SELECT * FROM `word-table` WHERE isFavorite = 1")
-    suspend fun fetchFavoriteWords(): List<WordInfoEntity>
+    fun fetchFavoriteWords(): List<WordInfoEntity>
 
     //update isUsed
     @Query("Update `word-table` Set isUsed= :isUsed Where word = :word")
@@ -47,10 +47,8 @@ interface WordInfoDao {
     @Query("Update `word-table` Set isFavorite= :isFavorite Where word = :word")
     suspend fun updateFavorite(isFavorite: Boolean, word: String): Int
 
-    //check is favorite
-    @Query("SELECT EXISTS (SELECT 1 FROM `word-table` WHERE word = :word AND isFavorite = 1)")
-    suspend fun isFavorite(word: String): Boolean
-
-
+    //check if is favorite
+    @Query("SELECT CASE WHEN EXISTS (SELECT * FROM `word-table` WHERE word = :word AND isFavorite = 1) THEN 1 ELSE 0 END")
+    fun isFavorite(word: String): Boolean
 
 }

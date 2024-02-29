@@ -2,7 +2,7 @@ package com.example.quizapp.core_utils.enums
 
 enum class Routes {
     Home,
-    WordInfoDetailPage,
+    WordDetailsPage,
     SearchPage,
     FavoritePage
 }

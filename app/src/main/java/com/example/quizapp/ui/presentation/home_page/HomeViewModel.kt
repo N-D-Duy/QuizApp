@@ -1,6 +1,7 @@
 package com.example.quizapp.ui.presentation.home_page
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.dictionaryapp.core_utils.Resource
 import com.example.quizapp.core_utils.enums.UpdateWordField
@@ -29,6 +30,13 @@ class HomeViewModel @Inject constructor(
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite = _isFavorite
 
+    fun resetDownloadState() {
+        _downloadWordsState.value = DownloadWords.Loading
+    }
+    fun updateListWords(currentList: List<WordInfo>){
+        _dataState.value = HomeState.Success(currentList)
+    }
+
     init {
         fetchRandomWord()
     }
@@ -38,13 +46,16 @@ class HomeViewModel @Inject constructor(
             result.collectLatest {
                 when (it) {
                     is Resource.Loading -> {
+                        Log.w("HomeViewModel", "isFavoriteWord: Loading")
                         _isFavorite.value = false
                     }
                     is Resource.Success -> {
                         _isFavorite.value = it.data ?: false
+//                        Log.w("HomeViewModel", "isFavoriteWord: Success")
                     }
                     is Resource.Error -> {
                         _isFavorite.value = false
+                        Log.w("HomeViewModel", "isFavoriteWord: Error")
                     }
                 }
             }
@@ -122,7 +133,21 @@ class HomeViewModel @Inject constructor(
 
     fun updateWord(word: String, data: Boolean, type: UpdateWordField) {
         scope.launch {
-            useCases.updateWord.invoke(word, data, type)
+            val result = useCases.updateWord.invoke(word, data, type)
+            result.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+
+                    }
+                    is Resource.Success -> {
+//                        Log.w("HomeViewModel", "updateWord: Success, $it")
+//                        _isFavorite.value = data
+                    }
+                    is Resource.Error -> {
+
+                    }
+                }
+            }
         }
     }
 

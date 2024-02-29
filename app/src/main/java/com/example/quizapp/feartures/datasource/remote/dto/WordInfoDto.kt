@@ -6,7 +6,7 @@ data class WordInfoDto(
     val meanings: List<MeaningDto>,
     val origin: String? = "",
     val phonetic: String? = "",
-    val phonetics: List<PhoneticDto>,
+    val phonetics: List<PhoneticDto>? = emptyList(),
     val word: String
 ) {
     fun toWordInfoEntity(): WordInfoEntity {
@@ -14,6 +14,7 @@ data class WordInfoDto(
             meanings = meanings.map { it.toMeaning() },
             origin = origin,
             phonetic = phonetic,
+            phonetics = phonetics?.map { it.toPhonetic() },
             word = word,
             id = 0
         )

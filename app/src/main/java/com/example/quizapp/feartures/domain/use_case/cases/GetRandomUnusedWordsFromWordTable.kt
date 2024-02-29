@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetRandomUnusedWordsFromWordTable (
     private val repository: Repository
 ) {
-    suspend operator fun invoke(): Flow<Resource<List<WordInfo>>> {
+    operator fun invoke(): Flow<Resource<List<WordInfo>>> {
         return repository.fetchRandomUnusedWordsFromWordTable()
     }
 }

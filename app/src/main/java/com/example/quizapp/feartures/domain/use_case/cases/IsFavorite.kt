@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class IsFavorite(
     private val repository: Repository
 ){
-    suspend operator fun invoke(word: String): Flow<Resource<Boolean>> {
+    operator fun invoke(word: String): Flow<Resource<Boolean>> {
         if(word.isEmpty()){
             throw IllegalArgumentException("Word can't be empty")
         }

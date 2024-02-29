@@ -15,7 +15,7 @@ class UpdateWord(
         return when(type){
             UpdateWordField.USED -> {
                 // update used
-                repository.updateSkip(data, word)
+                repository.updateIsUsed(data, word)
             }
 
             UpdateWordField.SKIP -> {

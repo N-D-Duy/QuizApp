@@ -14,7 +14,7 @@ interface Repository {
 
     suspend fun insertWordsToWordTable(words: List<WordInfoEntity>): Flow<Resource<String>>
 
-    suspend fun fetchRandomUnusedWordsFromWordTable(): Flow<Resource<List<WordInfo>>>
+    fun fetchRandomUnusedWordsFromWordTable(): Flow<Resource<List<WordInfo>>>
     suspend fun updateIsUsed(isUsed: Boolean, word: String): Flow<Resource<String>>
     suspend fun updateSkip(isSkipped: Boolean, word: String): Flow<Resource<String>>
     suspend fun updateDismissDuration(
@@ -26,8 +26,8 @@ interface Repository {
 
     suspend fun updateExpiredTime(expiredTime: Long, word: String): Flow<Resource<String>>
     suspend fun updateFavorite(isFavorite: Boolean, word: String): Flow<Resource<String>>
-    suspend fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>>
+    fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>>
 
-    suspend fun isFavorite(word: String): Flow<Resource<Boolean>>
+    fun isFavorite(word: String): Flow<Resource<Boolean>>
 
 }

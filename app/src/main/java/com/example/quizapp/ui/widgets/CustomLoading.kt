@@ -1,4 +1,4 @@
-package com.example.quizapp.ui.components
+package com.example.quizapp.ui.widgets
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

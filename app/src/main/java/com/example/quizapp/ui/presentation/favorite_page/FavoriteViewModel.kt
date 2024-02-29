@@ -20,11 +20,9 @@ class FavoriteViewModel @Inject constructor(
     private val _favoriteWords = MutableStateFlow<FavoriteState>(FavoriteState.Loading)
     val favoriteWords: MutableStateFlow<FavoriteState> = _favoriteWords
 
-    init {
-        fetchFavoriteWords()
-    }
 
-    private fun fetchFavoriteWords() {
+
+    fun fetchFavoriteWords() {
         _favoriteWords.value = FavoriteState.Loading
         scope.launch {
             try{

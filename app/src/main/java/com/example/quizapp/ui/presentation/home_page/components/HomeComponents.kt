@@ -1,5 +1,7 @@
 package com.example.quizapp.ui.presentation.home_page.components
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quizapp.R
 import com.example.quizapp.core_utils.enums.UpdateWordField
+import com.example.quizapp.core_utils.functions.AudioPlayer
+import com.example.quizapp.core_utils.text_to_speech.TTSListener
 import com.example.quizapp.core_utils.wordsconverter.WordConverter
 import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.quizapp.ui.presentation.home_page.HomeViewModel
@@ -37,17 +41,19 @@ import com.example.quizapp.ui.presentation.home_page.HomeViewModel
 @Composable
 fun HomeComponents(
     word: WordInfo,
-    viewModel: HomeViewModel
+    currentList: List<WordInfo>,
+    viewModel: HomeViewModel,
+    context: Context
 ) {
     val isPlaying = remember { mutableStateOf(false) }
     val isMenuShow = remember { mutableStateOf(false) }
-    viewModel.isFavoriteWord(word.word)
-    val isFavoriteWord = viewModel.isFavorite.collectAsState()
+
+    //state to play button favorite
+    val isFavorite = remember { mutableStateOf(word.isFavorite) }
+
 
     val displayWordPair =
         remember { mutableStateOf(Pair(WordConverter(word.word).convertAndColorWord(), false)) }
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,53 +65,42 @@ fun HomeComponents(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             //Button favorite
-            when(isFavoriteWord.value){
-                true -> {
-                    IconButton(
-                        onClick = {
-                            //update favorite
-                            viewModel.updateWord(
-                                word.word,
-                                !isFavoriteWord.value,
-                                type = UpdateWordField.FAVOURITE
-                            )
-                        },
-                        modifier = Modifier
-                            .size(50.dp),
-                        content = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_favorite_filled),
-                                contentDescription = null,
-                                tint = Color.Yellow,
-                                modifier = Modifier.size(30.dp)
-                            )
+            IconButton(
+                onClick = {
+                    viewModel.updateWord(
+                        word.word,
+                        !isFavorite.value,
+                        UpdateWordField.FAVOURITE,
+                    )
+                    isFavorite.value = !isFavorite.value
+                    //update list words
+                    val newList = currentList.map {
+                        if (it.word == word.word) {
+                            it.copy(isFavorite = isFavorite.value)
+                        } else {
+                            it
                         }
+                    }
+                    viewModel.updateListWords(newList)
+                },
+                modifier = Modifier
+                    .size(50.dp),
+                content = {
+                    val icon = if (isFavorite.value) {
+//                        Log.w("HomeComponents", "icon: ${isFavoriteWord.value}")
+                        R.drawable.ic_favorite_filled
+                    } else {
+                        R.drawable.ic_favorite
+                    }
+                    Icon(
+                        painter = painterResource(id = icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
-                false -> {
-                    IconButton(
-                        onClick = {
-                            //update favorite
-                            viewModel.updateWord(
-                                word.word,
-                                !isFavoriteWord.value,
-                                type = UpdateWordField.FAVOURITE
-                            )
-                        },
-                        modifier = Modifier
-                            .size(50.dp),
-                        content = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_favorite),
-                                contentDescription = null,
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
-                    )
-                }
-            }
+            )
+
 
             //Button option menu
             IconButton(
@@ -174,6 +169,26 @@ fun HomeComponents(
         //Button play sound
         IconButton(onClick = {
             isPlaying.value = !isPlaying.value
+            Log.w("HomeComponents", "list phonetics: ${word.phonetics} ")
+            if (word.phonetics.isNullOrEmpty()) {
+                TTSListener(context = context, word.word, isPlaying.value) {
+                    isPlaying.value = false
+                }
+            } else {
+                word.phonetics?.let { phonetics ->
+                    for (phonetic in phonetics) {
+                        if (!phonetic.audio.isNullOrEmpty()) {
+                            AudioPlayer()(phonetic.audio, isPlaying.value) { isPlaying.value = false }
+                            return@let
+                        } else{
+                            TTSListener(context = context, word.word, isPlaying.value) {
+                                isPlaying.value = false
+                            }
+                        }
+                    }
+                }
+            }
+
         }) {
             val icon = if (isPlaying.value) {
                 R.drawable.ic_pause_filled

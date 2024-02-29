@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,11 +15,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.quizapp.feartures.domain.model.WordInfo
+import com.example.quizapp.ui.widgets.WordItem
 
 @Composable
 fun SearchPage(
     viewModel: SearchViewModel,
+    navigateToWordDetails: (WordInfo) -> Unit,
 ) {
     val state = viewModel.searchState.collectAsState()
 
@@ -38,6 +41,7 @@ fun SearchPage(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 64.dp)
     ) {
         // Search bar
         TextField(
@@ -63,22 +67,30 @@ fun SearchPage(
         // Search results
         when (state.value) {
             is SearchState.Loading -> {
-                if(isSearching.value){
+                if (isSearching.value) {
                     Text("Loading...")
                 }
             }
+
             is SearchState.Success -> {
                 val data = (state.value as SearchState.Success).data
                 data.isNotEmpty().let { isNotEmpty ->
                     if (isNotEmpty) {
-                        data.forEach {
-                            Text(it.word)
+                        if (query.value.isNotEmpty()) {
+                            LazyColumn(content = {
+                                items(data.size) {
+                                    WordItem(word = data[it], onClick = {
+                                        navigateToWordDetails(data[it])
+                                    })
+                                }
+                            })
                         }
                     } else {
                         Text("No results found")
                     }
                 }
             }
+
             is SearchState.Error -> {
                 val error = (state.value as SearchState.Error).error
                 Text(error)
@@ -87,3 +99,5 @@ fun SearchPage(
     }
 
 }
+
+

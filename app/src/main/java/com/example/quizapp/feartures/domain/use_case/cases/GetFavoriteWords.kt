@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetFavoriteWords(
     private val repository: Repository
 ) {
-    suspend operator fun invoke(): Flow<Resource<List<WordInfo>>> {
+    operator fun invoke(): Flow<Resource<List<WordInfo>>> {
         return repository.fetchFavoriteWordsFromWordTable()
     }
 }

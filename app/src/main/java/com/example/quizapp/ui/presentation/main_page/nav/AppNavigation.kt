@@ -14,20 +14,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.PratikFagadiya.smoothanimationbottombar.model.SmoothAnimationBottomBarScreens
 import com.PratikFagadiya.smoothanimationbottombar.properties.BottomBarProperties
 import com.PratikFagadiya.smoothanimationbottombar.ui.SmoothAnimationBottomBar
 import com.example.quizapp.R
 import com.example.quizapp.core_utils.routes.AppRoutes
+import com.example.quizapp.feartures.domain.model.WordInfo
 import com.example.quizapp.ui.presentation.favorite_page.FavoritePage
 import com.example.quizapp.ui.presentation.favorite_page.FavoriteViewModel
 import com.example.quizapp.ui.presentation.home_page.HomePage
 import com.example.quizapp.ui.presentation.home_page.HomeViewModel
 import com.example.quizapp.ui.presentation.search_page.SearchPage
 import com.example.quizapp.ui.presentation.search_page.SearchViewModel
+import com.example.quizapp.ui.presentation.word_details_page.WordDetailsPage
 import com.example.quizapp.ui.theme.Blue
 import com.example.quizapp.ui.theme.BlueTint
 import com.example.quizapp.ui.theme.Grey
@@ -90,17 +95,35 @@ fun AppNavigation() {
             composable(AppRoutes.SearchPage.route) {
                 val searchViewModel = hiltViewModel<SearchViewModel>()
                 SearchPage(
-                    viewModel = searchViewModel
+                    viewModel = searchViewModel,
+                    navigateToWordDetails = { word ->
+                        navigateToWordDetails(navController, word)
+                    }
                 )
             }
 
             composable(AppRoutes.FavoritePage.route) {
                 val favoriteViewModel = hiltViewModel<FavoriteViewModel>()
                 FavoritePage(
-                    viewModel = favoriteViewModel
+                    viewModel = favoriteViewModel,
+                    navigateToWordDetails = { word ->
+                        navigateToWordDetails(navController, word)
+                    }
                 )
+            }
+
+            composable(AppRoutes.WordDetailsPage.route) {
+                navController.previousBackStackEntry?.savedStateHandle?.get<WordInfo>("word")?.let {wordInfo ->
+                    WordDetailsPage(word = wordInfo, navigateUp = {
+                        navController.popBackStack()
+                    })
+                }
             }
         }
     }
-
 }
+private fun navigateToWordDetails(navController: NavController, word: WordInfo) {
+    navController.currentBackStackEntry?.savedStateHandle?.set("word", word)
+    navController.navigate(AppRoutes.WordDetailsPage.route)
+}
+

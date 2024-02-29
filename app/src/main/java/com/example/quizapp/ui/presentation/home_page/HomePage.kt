@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,10 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.quizapp.feartures.domain.model.WordInfo
-import com.example.quizapp.ui.components.CustomLoading
-import com.example.quizapp.ui.components.CustomSnackBar
-import com.example.quizapp.ui.presentation.home_page.components.HomeComponents
 import com.example.quizapp.ui.presentation.home_page.components.HomePager
+import com.example.quizapp.ui.widgets.CustomLoading
+import com.example.quizapp.ui.widgets.CustomSnackBar
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -30,6 +28,7 @@ fun HomePage(
     val context = LocalContext.current
     val mainState = viewModel.dataState.collectAsState()
     val downloadWordsState = viewModel.downloadWordsState.collectAsState()
+
 
     when (mainState.value) {
         is HomeState.Loading -> {
@@ -44,26 +43,18 @@ fun HomePage(
             ) {
                 val data = (mainState.value as HomeState.Success).data
                 if (data.isEmpty()
-                    && downloadWordsState.value !is HomeViewModel.DownloadWords.Loading
-                    && downloadWordsState.value !is HomeViewModel.DownloadWords.DownloadWordsError
                 ) {
                     DownloadWords(context, viewModel, downloadWordsState.value)
                     viewModel.fetchRandomWord()
                 } else {
-                    HomeScreen(data = data, viewModel)
+                    HomeScreen(data = data, viewModel, context)
                 }
             }
         }
 
         is HomeState.Error -> {
             // Show failed
-            CustomSnackBar(
-                message = (mainState.value as HomeState.Error).error,
-                actionLabel = "Retry",
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                viewModel.fetchRandomWord()
-            }
+            CustomSnackBar(message = (mainState.value as HomeState.Error).error)
         }
     }
 
@@ -93,15 +84,7 @@ fun DownloadWords(
             Text(text = "Download Words")
         }
         if (state is HomeViewModel.DownloadWords.DownloadWordsError) {
-            CustomSnackBar(
-                message = state.message,
-                actionLabel = "Retry",
-                modifier = Modifier.weight(1f)
-            ) {
-                isDownloadButtonClicked.value = true
-                viewModel.downloadWords(context)
-            }
-
+            CustomSnackBar(message = state.message)
         }
     }
 
@@ -114,9 +97,11 @@ fun DownloadWords(
 @Composable
 fun HomeScreen(
     data: List<WordInfo>,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    context: Context
 ) {
-    HomePager(words = data, viewModel = viewModel)
+
+    HomePager(words = data, viewModel = viewModel, context = context)
 }
 
 

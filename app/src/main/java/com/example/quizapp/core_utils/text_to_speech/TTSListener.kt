@@ -1,58 +1,81 @@
-package com.example.dictionaryapp.core_utils.text_to_speech
+package com.example.quizapp.core_utils.text_to_speech
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import java.util.Locale
 
-class TTSListener(context: Context, private val onSpeechCompleted: () -> Unit) :
-    DefaultLifecycleObserver {
-    private var onInit = false
-    private var textToSpeechEngine: TextToSpeech
+class TTSListener(
+    private val context: Context,
+    private val word: String,
+    private val isPlayingState: Boolean,
+    private val onFinished: () -> Unit
+) : DefaultLifecycleObserver {
+
+    private var textToSpeechEngine: TextToSpeech? = null
+    private var isSpeaking: Boolean = false
 
     init {
-        textToSpeechEngine = TextToSpeech(context, { status ->
-            if (status == TextToSpeech.SUCCESS)
-                onInit = true
-        }, "com.google.android.tts")
+        setupTextToSpeechEngine()
     }
 
-    fun speak(text: String) {
-        if (onInit) {
-            textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1")
+    // This function is called when the TTSListener is created
+    private fun setupTextToSpeechEngine() {
+        textToSpeechEngine = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeechEngine?.language = Locale.US
+                startSpeaking()
+
+            }
         }
     }
 
-    fun stop() {
-        textToSpeechEngine.stop()
+    private fun startSpeaking() {
+        if (!isSpeaking) {
+            isSpeaking = true
+            textToSpeechEngine?.speak(word, TextToSpeech.QUEUE_FLUSH, null, "tts1")
+        }
+    }
+
+    private fun stop() {
+        if (isSpeaking) {
+            isSpeaking = false
+            textToSpeechEngine?.stop()
+            onFinished()
+        }
+    }
+
+    private fun onSpeechCompleted() {
+        stop()
     }
 
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
-        textToSpeechEngine.setOnUtteranceProgressListener(object :
-            UtteranceProgressListener() {
-
-            override fun onError(p0: String?) {
+        textToSpeechEngine?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
             }
 
-            override fun onStart(p0: String?) {
-
-            }
-
-            override fun onDone(p0: String?) {
+            override fun onDone(utteranceId: String?) {
                 onSpeechCompleted()
+            }
+
+            @Deprecated("Deprecated in Java")
+            override fun onError(utteranceId: String?) {
             }
         })
     }
 
     override fun onStop(owner: LifecycleOwner) {
         super.onStop(owner)
-        textToSpeechEngine.stop()
+        stop()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        textToSpeechEngine.shutdown()
+        textToSpeechEngine?.shutdown()
     }
 }
+
+

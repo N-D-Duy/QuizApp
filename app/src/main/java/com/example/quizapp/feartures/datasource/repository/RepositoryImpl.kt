@@ -73,7 +73,7 @@ class RepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchRandomUnusedWordsFromWordTable(): Flow<Resource<List<WordInfo>>> {
+    override fun fetchRandomUnusedWordsFromWordTable(): Flow<Resource<List<WordInfo>>> {
         return flow {
             try {
                 //fetch random unused words from word table
@@ -210,8 +210,8 @@ class RepositoryImpl(
         return flow {
             try {
                 //update isFavorite
-                db.wordDao.updateFavorite(isFavorite, word)
-                emit(Resource.Success("Word updated successfully"))
+                val result = db.wordDao.updateFavorite(isFavorite, word)
+                emit(Resource.Success("Word updated successfully, $result"))
             } catch (e: HttpException) {
                 emit(
                     Resource.Error(
@@ -225,7 +225,7 @@ class RepositoryImpl(
         }
     }
 
-    override suspend fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>> {
+    override fun fetchFavoriteWordsFromWordTable(): Flow<Resource<List<WordInfo>>> {
         return flow {
             try {
                 //fetch favorite words from word table
@@ -244,7 +244,7 @@ class RepositoryImpl(
         }
     }
 
-    override suspend fun isFavorite(word: String): Flow<Resource<Boolean>> {
+    override fun isFavorite(word: String): Flow<Resource<Boolean>> {
         return flow {
             try {
                 //check if word is favorite
